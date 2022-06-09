@@ -17,7 +17,7 @@
                         <RouterLink to="/menu">Menu</RouterLink>
                      
                         <RouterLink to="/contact">Contact</RouterLink>
-                        
+                        <RouterLink to="/cart">Cart</RouterLink>
                          <a v-if="main.tokenSet"  @click="main.logout($event)">Logout</a>
                 </div>
      
@@ -41,7 +41,7 @@
 
     
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 .wrapper{
       box-shadow: 0 11px 12px 0 rgb(0 0 0 / 12%);
       display: flex;

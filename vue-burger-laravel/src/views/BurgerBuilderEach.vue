@@ -36,8 +36,7 @@
                           <div class="col-md-6">
                                   
                                   <div v-if="loggedIn" class="save">
-                                    <input type="text" v-model="burgerName" placeholder="name">
-                                    <button @click="saveBurger">Save</button>
+                                  <h1>Burger name: <br> {{burgerName}}</h1>
                                   </div>
                                   <div v-else class="signup">
                                       <h2>Sign up <br> To Save Your Favorite Combo</h2>
@@ -96,7 +95,6 @@ data() {
                 'meat':[]
             }    
         ],
-        totalPrice:'',
         topping:'',
         totalPrice:'3.50',
         saladIndex:0,
@@ -105,7 +103,8 @@ data() {
         meatIndex:0,
         loggedIn:false,
         burgerName:'',
-        id:this.$route.params.id
+        id:this.$route.params.id,
+        burgerName:''
       }
     },
     mounted(){
@@ -122,8 +121,8 @@ data() {
                 console.log(response)
 
                 this.addToppings = response.data.burger
-            
-                
+              this.totalPrice = response.data.burger[4].finalPrice
+                this.burgerName = response.data.burger_name
             })
             .catch(error => console.log(error));
     },
@@ -185,7 +184,7 @@ data() {
                             topping:topping.topping,
                 })
             }
-            this.totalPrice = parseFloat(topping.price) +  parseFloat(this.totalPrice)
+            this.totalPrice = parseFloat(topping.price) + parseFloat(this.totalPrice)
        
             this.burgerOptions[topping.id -1].activeCount.push('true')
     

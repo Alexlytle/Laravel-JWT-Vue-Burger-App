@@ -4,7 +4,10 @@ import BurgerBuilder from "../views/BurgerBuilder.vue";
 import BurgerBuilderEach from "../views/BurgerBuilderEach.vue";
 import SignInVue from "../views/SignInView.vue";
 
+import Cart from "../views/CartView.vue";
+
 import MenuView from "../views/MenuView.vue";
+import ContactView from "../views/ContactView.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -49,6 +52,16 @@ const router = createRouter({
           path: "/menu",
           name: "menu",
           component: MenuView,
+        },
+        {
+          path: "/contact",
+          name: "contact",
+          component: ContactView,
+        },
+        {
+          path: "/cart",
+          name: "cart",
+          component: Cart,
         }
     ],
 });

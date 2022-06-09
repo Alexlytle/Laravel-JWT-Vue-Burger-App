@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-12 burger-left">
              
-
+<!-- {{this.cart}} -->
                         <!-- <p</p> -->
                         <div class="box">
                             <div class="bread-top">
@@ -33,18 +33,21 @@
                     </div>
                     <div class="col-12 burger-right">
                        <div class="row">
-     <div class="col-md-6">
-                                
+                    <div class="col-md-6">
+                                   
                                 <div v-if="loggedIn" class="save">
                                   <input type="text" v-model="burgerName" placeholder="name">
                                    <button @click="saveBurger">Save</button>
+                                    <button @click="addToCart()"> Add To Cart</button>
                                 </div>
                                 <div v-else class="signup">
                                     <h2>Sign up <br> To Save Your Favorite Combo</h2>
                                     <button>
                                          <RouterLink to="/">Signup</RouterLink> 
                                     </button>
+                                     <button class="cart" @click="addToCart()"> Add To Cart</button>
                                 </div>
+                                
                             </div>
                       <div class="col-md-6">
                         <div class="burger-control">
@@ -61,7 +64,7 @@
                       </div>
                        </div>
                        
-                           
+                         
                     </div>
                 </div>
             </div>
@@ -94,9 +97,11 @@ data() {
             },
             {
                 'meat':[]
-            }    
+            },
+            {
+              finalPrice:''
+            }
         ],
-        totalPrice:'',
         topping:'',
         totalPrice:'3.50',
         saladIndex:0,
@@ -104,15 +109,39 @@ data() {
         cheeseIndex:0,
         meatIndex:0,
         loggedIn:false,
-        burgerName:''
+        burgerName:'',
+          cart:[
+                {
+                  fries:[]
+                },
+                {
+                  drink:[]
+                },
+                {
+                  shake:[]
+                },
+                {
+                  burger:[]
+                }
+                
+          ]
       }
     },
     mounted(){
         if(localStorage.getItem('token')!==null){
             this.loggedIn = true
         }
+         if(localStorage.getItem('cart')!==null){
+            this.cart = JSON.parse(localStorage.getItem('cart'));
+          
+        }
     },
     methods:{
+      addToCart(){
+         this.cart[3].burger.push(JSON.stringify(this.addToppings))
+
+           localStorage.setItem('cart',JSON.stringify(this.cart))
+      },
         saveBurger(){
          axios.defaults.withCredentials = true;
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
@@ -170,7 +199,7 @@ data() {
                 })
             }
             this.totalPrice = parseFloat(topping.price) +  parseFloat(this.totalPrice)
-       
+            this.addToppings[4].finalPrice =  this.formatPrice(this.totalPrice) 
             this.burgerOptions[topping.id -1].activeCount.push('true')
     
         },
@@ -207,6 +236,9 @@ data() {
                     this.totalPrice =  parseFloat(this.totalPrice) - parseFloat('1.30')
                     this.meatIndex--
                 }
+
+                  
+               this.addToppings[4].finalPrice =  this.formatPrice(this.totalPrice) 
           
         },
     }
@@ -214,7 +246,9 @@ data() {
 </script>
 
 <style lang="scss" scoped>
-
+.cart{
+  margin: 10px;
+}
 .signup{
     height: 100%;
     display: flex;
