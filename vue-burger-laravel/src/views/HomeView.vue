@@ -31,14 +31,19 @@
                         <div class="form-group">
                             <label for="">Name</label>
                             <input type="text" v-model="main.name">
+                            <p style="color:white;margin:0;">{{main.emailErrorsNameSignUp !== ''?main.emailErrorsNameSignUp:''}}</p> 
                         </div>
                         <div class="form-group">
                             <label for="">Email</label>
                             <input type="email" v-model="main.email">
+                       
+                             <p style="color:white;margin:0;">{{main.emailErrorSignUp !== ''?main.emailErrorSignUp:''}}</p> 
                         </div>
                          <div class="form-group">
                             <label for="">password</label>
                             <input type="password" v-model="main.password">
+                              <p style="color:white;margin:0;">{{main.emailErrorsPasswordSignUp !== ''?main.emailErrorsPasswordSignUp:''}}</p> 
+                             <!-- <p style="color:white;margin:0;">{{main.errors.length !== 0?main.errors.errors.password[0]:''}}</p> -->
                         </div>
                        
                         <div class="form-group">

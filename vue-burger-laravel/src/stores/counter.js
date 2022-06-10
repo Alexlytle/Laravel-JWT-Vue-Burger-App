@@ -13,7 +13,14 @@ export const useCounterStore = defineStore({
        dashboardName:'',
        dashboardEmail:'',
        loginPassword:'',
-       loginEmail:''
+       loginEmail:'',
+       errors:[],
+       emailErrorSignUp:'',
+       emailErrorsNameSignUp:'',
+       emailErrorsPasswordSignUp:'',
+       passwordLogin:'',
+       emailLogin:''
+
 
     }),
     actions: {
@@ -48,6 +55,21 @@ export const useCounterStore = defineStore({
                     this.tokenSet = true
                     router.push({ path: '/dashboard' })
             })
+            .catch(error=>{
+                    if(error.response.status === 422){
+                        if(error.response.data.errors.email[0] !== ''){
+                            this.emailErrorSignUp = error.response.data.errors.email[0]
+                        }
+                        if(error.response.data.errors.name[0] !== ''){
+                            this.emailErrorsNameSignUp = error.response.data.errors.name[0]
+                        }
+
+                        if(error.response.data.errors.password[0] !== ''){
+                            this.emailErrorsPasswordSignUp = error.response.data.errors.password[0]
+                        }
+              
+                    }
+            })
         },
         login(e){
             e.preventDefault()
@@ -64,7 +86,21 @@ export const useCounterStore = defineStore({
                     console.log(response)
                     
             })
-            .catch(error => console.log(error)); 
+            .catch(error => {
+                if(error.response.status === 422){
+                 
+                    if(error.response.data.errors.email[0] !== ''){
+                        this.emailLogin = error.response.data.errors.email[0]
+                        console.log(error.response.data.errors.email[0])
+                    }
+
+
+                    if(error.response.data.errors.password[0] !== ''){
+                        this.passwordLogin = error.response.data.errors.password[0]
+                    }
+          
+                }
+            }); 
         },
        
     },

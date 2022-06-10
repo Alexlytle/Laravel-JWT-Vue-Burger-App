@@ -70,7 +70,7 @@
                   </div>
                  
                 </div>
-<h1 v-if="cart[3].burger.length>=1">Burgers</h1>
+
           
           <div class="col-md-12" v-for="shakes in cart[2].shake">
                   <div v-if="shakes[Object.keys(shakes)[0]][0].quantity !== '' && shakes[Object.keys(shakes)[0]][0].quantity !== 0 ">
@@ -101,7 +101,8 @@
           </div>
       
           <div class="row">
-                    <div class="col-md-6" v-for="(burger,index) in cart[3].burger">
+            <h1 v-if="cart[3].burger.length>=1">Burgers</h1>
+                    <div class="col-md-3" v-for="(burger,index) in cart[3].burger">
                
                           
                               <div class="bread-top">

@@ -41,10 +41,13 @@
                         <div class="form-group">
                             <label for="">Email</label>
                             <input type="email" v-model="main.loginEmail">
+                              <p style="color:white;margin:0;">{{main.emailLogin !== ''?main.emailLogin:''}}</p> 
+                              <!-- {{main}} -->
                         </div>
                          <div class="form-group">
                             <label for="">password</label>
                             <input type="password" v-model="main.loginPassword">
+                              <p style="color:white;margin:0;">{{main.passwordLogin !== ''?main.passwordLogin:''}}</p> 
                         </div>
                       
                         <div class="form-group">

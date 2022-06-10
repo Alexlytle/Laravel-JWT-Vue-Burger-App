@@ -39,6 +39,7 @@
                                   <input type="text" v-model="burgerName" placeholder="name">
                                    <button @click="saveBurger">Save</button>
                                     <button @click="addToCart()"> Add To Cart</button>
+                                    <div v-if="adddedToCart == true"><p class="addedtocart">Added To Cart</p></div>
                                 </div>
                                 <div v-else class="signup">
                                     <h2>Sign up <br> To Save Your Favorite Combo</h2>
@@ -46,7 +47,12 @@
                                          <RouterLink to="/">Signup</RouterLink> 
                                     </button>
                                      <button class="cart" @click="addToCart()"> Add To Cart</button>
+                                         <div v-if="adddedToCart == true">
+                                                <p class="addedtocart">Added To Cart</p>
+                                         </div>
+                                         {{burgerError}}
                                 </div>
+
                                 
                             </div>
                       <div class="col-md-6">
@@ -78,7 +84,6 @@ import router from '../router'
 export default {
 data() {
       return {
-        message: 'Hello Vue!',
         burgerOptions:[
             {id:'1', topping:'Salad:',price:'0.50',activeCount:[]},
             {id:'2',topping:'Bacon:',price:'0.30',activeCount:[]},
@@ -124,7 +129,9 @@ data() {
                   burger:[]
                 }
                 
-          ]
+          ],
+        adddedToCart:false,
+        burgerError:''
       }
     },
     mounted(){
@@ -138,9 +145,22 @@ data() {
     },
     methods:{
       addToCart(){
+       
+        console.log(this.addToppings[0].salad)
+        if(this.addToppings[0].salad == '' && this.addToppings[1].bacon == '' && this.addToppings[2].cheese == '' && this.addToppings[3].meat == ''){
+          console.log('hello')
+          this.burgerError = 'Burger can not be empty'
+        }else{
          this.cart[3].burger.push(JSON.stringify(this.addToppings))
 
            localStorage.setItem('cart',JSON.stringify(this.cart))
+
+           this.adddedToCart = true
+             this.burgerError = ''
+        }
+      
+
+
       },
         saveBurger(){
          axios.defaults.withCredentials = true;
@@ -246,6 +266,9 @@ data() {
 </script>
 
 <style lang="scss" scoped>
+.addedtocart{
+  color: white;
+}
 .cart{
   margin: 10px;
 }
