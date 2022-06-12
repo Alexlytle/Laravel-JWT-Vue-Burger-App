@@ -35,11 +35,23 @@
                        <div class="row">
                     <div class="col-md-6">
                                    
-                                <div v-if="loggedIn" class="save">
+                                <div v-if="loggedIn" class="action-logged-in">
+                                  
+                                
+                                
+                                  
                                   <input type="text" v-model="burgerName" placeholder="name">
-                                   <button @click="saveBurger">Save</button>
-                                    <button @click="addToCart()"> Add To Cart</button>
-                                    <div v-if="adddedToCart == true"><p class="addedtocart">Added To Cart</p></div>
+                                  <div class=" save">
+                                  
+                                      <button @click="saveBurger">Save</button>
+                                        <button @click="addToCart()"> Add To Cart</button>
+                                       <div v-if="adddedToCart == true">
+                                                <a href = "/cart" class="addedtocart"> Added To Cart</a>
+                                         </div>
+                                      
+                                  </div>
+                                   {{burgerError}}
+                                   {{saveBurgerError}}
                                 </div>
                                 <div v-else class="signup">
                                     <h2>Sign up <br> To Save Your Favorite Combo</h2>
@@ -48,7 +60,7 @@
                                     </button>
                                      <button class="cart" @click="addToCart()"> Add To Cart</button>
                                          <div v-if="adddedToCart == true">
-                                                <p class="addedtocart">Added To Cart</p>
+                                                <a href = "/cart" class="addedtocart"> Added To Cart</a>
                                          </div>
                                          {{burgerError}}
                                 </div>
@@ -115,15 +127,36 @@ data() {
         meatIndex:0,
         loggedIn:false,
         burgerName:'',
-          cart:[
+                cart:[
                 {
-                  fries:[]
+                  fries:[{quantity:'',price:0}]
                 },
                 {
-                  drink:[]
+                  drink:[
+                    {
+                      Pepsi:[{quantity:'',price:0}]
+                    },
+                    {
+                      Coke:[{quantity:'',price:0}]
+                    },
+                    {
+                      Sprite:[{quantity:'',price:0}]
+                    }
+
+                  ]
                 },
                 {
-                  shake:[]
+                  shake:[
+                    {
+                      Strawberry:[{quantity:'',price:0}]
+                    },
+                    {
+                      Vanilla:[{quantity:'',price:0}]
+                    },
+                     {
+                      Chocolate:[{quantity:'',price:0}]
+                    },
+                  ]
                 },
                 {
                   burger:[]
@@ -131,7 +164,9 @@ data() {
                 
           ],
         adddedToCart:false,
-        burgerError:''
+        burgerError:'',
+        saveBurgerError:'',
+    
       }
     },
     mounted(){
@@ -140,13 +175,12 @@ data() {
         }
          if(localStorage.getItem('cart')!==null){
             this.cart = JSON.parse(localStorage.getItem('cart'));
-          
         }
     },
     methods:{
       addToCart(){
        
-        console.log(this.addToppings[0].salad)
+        console.log('hello')
         if(this.addToppings[0].salad == '' && this.addToppings[1].bacon == '' && this.addToppings[2].cheese == '' && this.addToppings[3].meat == ''){
           console.log('hello')
           this.burgerError = 'Burger can not be empty'
@@ -157,25 +191,34 @@ data() {
 
            this.adddedToCart = true
              this.burgerError = ''
+             this.burgerSuccess = true
         }
       
 
 
       },
         saveBurger(){
-         axios.defaults.withCredentials = true;
+          if(this.addToppings[0].salad == '' && this.addToppings[1].bacon == '' && this.addToppings[2].cheese == '' && this.addToppings[3].meat == ''){
+               this.saveBurgerError =  'Burger can not be empty';
+          }else{
+              axios.defaults.withCredentials = true;
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-            axios.post('http://localhost:8000/api/burger',
+            axios.post(`${import.meta.env.VITE_BASE_URL}/api/burger`,
             {
               burger:this.addToppings,
-              name:this.burgerName
+              burger_name:this.burgerName
             })
             .then(response => { 
                 console.log(response)
                  router.push({ path: '/dashboard' })
   
             })
-            .catch(error => console.log(error)); 
+            .catch(error => {
+             console.log( error.response.data.errors.burger_name[0])
+             this.saveBurgerError = error.response.data.errors.burger_name[0]
+            }); 
+          }
+       
         },
         addTopping(e){
     
@@ -266,6 +309,13 @@ data() {
 </script>
 
 <style lang="scss" scoped>
+.action-logged-in{
+    input{
+      width:200px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+}
 .addedtocart{
   color: white;
 }
@@ -278,6 +328,7 @@ data() {
     align-items: center;
     justify-content: start;
     flex-direction: column;
+    padding: 20px;
     a{
         text-decoration: none;
         color: black;
@@ -308,6 +359,7 @@ data() {
         border: none;
         box-shadow: 0 11px 12px 0 rgb(0 0 0 / 12%);
         border-radius: 10px;
+        margin-left: 20px;
     }
 
 }
@@ -316,7 +368,7 @@ body {
 }
 
 .row {
-  min-height: 100vh;
+  min-height: 50vh;
 }
 
 .burger-right {
@@ -343,7 +395,6 @@ body {
           box-shadow: 20px 20px 60px #be672c,
  -20px -20px 60px #ff8b3c;
   padding: 20px;
-  width: 400px;
 }
 
 .burger-left {

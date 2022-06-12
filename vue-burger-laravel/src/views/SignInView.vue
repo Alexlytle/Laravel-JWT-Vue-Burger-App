@@ -37,7 +37,7 @@
                     </ul>
                   
                     <form>
-                    
+                    <div v-show = "main.signInSpinner" class="spinner-border" role="status"></div>
                         <div class="form-group">
                             <label for="">Email</label>
                             <input type="email" v-model="main.loginEmail">

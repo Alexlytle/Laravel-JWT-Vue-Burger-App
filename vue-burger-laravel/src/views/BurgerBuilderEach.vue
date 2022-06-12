@@ -33,10 +33,15 @@
                     </div>
                     <div class="col-12 burger-right">
                        <div class="row">
-                          <div class="col-md-6">
+                          <div class="col-md-12">
                                   
                                   <div v-if="loggedIn" class="save">
-                                  <h1>Burger name: <br> {{burgerName}}</h1>
+                                      <h2>Burger name: <br> {{burgerName}}</h2>
+                                        <button @click="addToCart()">Add to cart</button>
+                                        {{burgerError}}
+                                     <div class="" v-if="burgerSuccess" style="margin-top:10px;">
+                                      <a href="/cart" style="color:white;">Burger Added</a>
+                                     </div>
                                   </div>
                                   <div v-else class="signup">
                                       <h2>Sign up <br> To Save Your Favorite Combo</h2>
@@ -45,7 +50,7 @@
                                       </button>
                                   </div>
                               </div>
-                              <div class="col-md-6">
+                              <!-- <div class="col-md-6">
                                 <div class="burger-control">
                                         <h1>Burger Builder</h1>
                                         <h3>Price: ${{formatPrice(totalPrice)}}</h3>
@@ -57,7 +62,7 @@
                                             </ul>
                                         
                                     </div>
-                              </div>
+                              </div> -->
                        </div>
                        
                            
@@ -104,7 +109,44 @@ data() {
         loggedIn:false,
         burgerName:'',
         id:this.$route.params.id,
-        burgerName:''
+          cart:[
+                {
+                  fries:[{quantity:'',price:0}]
+                },
+                {
+                  drink:[
+                    {
+                      Pepsi:[{quantity:'',price:0}]
+                    },
+                    {
+                      Coke:[{quantity:'',price:0}]
+                    },
+                    {
+                      Sprite:[{quantity:'',price:0}]
+                    }
+
+                  ]
+                },
+                {
+                  shake:[
+                    {
+                      Strawberry:[{quantity:'',price:0}]
+                    },
+                    {
+                      Vanilla:[{quantity:'',price:0}]
+                    },
+                     {
+                      Chocolate:[{quantity:'',price:0}]
+                    },
+                  ]
+                },
+                {
+                  burger:[]
+                }
+                
+          ],
+        burgerError:'',
+        burgerSuccess:false
       }
     },
     mounted(){
@@ -113,9 +155,14 @@ data() {
             //  main.tokenSet = true
         }
 
+        if(localStorage.getItem('cart')!==null){
+            this.cart = JSON.parse(localStorage.getItem('cart'));
+        }
+
+
             axios.defaults.withCredentials = true;
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-            axios.get(`http://localhost:8000/api/burger/each/${this.id}`)
+            axios.get(`${import.meta.env.VITE_BASE_URL}/api/burger/each/${this.id}`)
             .then(response => {
                 
                 console.log(response)
@@ -130,7 +177,7 @@ data() {
         saveBurger(){
             axios.defaults.withCredentials = true;
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-            axios.post('http://localhost:8000/api/burger',
+            axios.post(`${import.meta.env.VITE_BASE_URL}/api/burger`,
             {
               burger:this.addToppings,
               name:this.burgerName
@@ -138,11 +185,30 @@ data() {
             .then(response => {
                 
                 console.log(response)
+             
             
                 
             })
             .catch(error => console.log(error)); 
         },
+      addToCart(){
+       
+        if(this.addToppings[0].salad == '' && this.addToppings[1].bacon == '' && this.addToppings[2].cheese == '' && this.addToppings[3].meat == ''){
+          console.log('hello')
+          this.burgerError = 'Burger can not be empty'
+        }else{
+         this.cart[3].burger.push(JSON.stringify(this.addToppings))
+
+           localStorage.setItem('cart',JSON.stringify(this.cart))
+
+           this.adddedToCart = true
+             this.burgerError = ''
+                this.burgerSuccess = true
+        }
+      
+        console.log(this.cart)
+
+      },
         addTopping(e){
     
             let toppings =  this.burgerOptions.filter((item)=>{
@@ -258,6 +324,8 @@ data() {
         display: flex;
     justify-content: flex-end;
     margin-right: 50px;
+    flex-direction: column;
+    align-items: center;
     button{
       background: white;
         padding: 10px;

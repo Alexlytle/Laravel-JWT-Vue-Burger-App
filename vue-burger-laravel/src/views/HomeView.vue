@@ -26,7 +26,7 @@
                             </RouterLink>
                         </li>
                     </ul>
-                  
+                  <div v-show="main.regsiterSpinner" class="spinner-border" role="status"></div>
                     <form>
                         <div class="form-group">
                             <label for="">Name</label>

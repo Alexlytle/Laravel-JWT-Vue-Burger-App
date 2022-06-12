@@ -6,7 +6,7 @@
    <header>
   
 
-        <div class="wrapper">
+        <!-- <div class="wrapper">
             <nav>
                 <RouterLink to="/">
                     <img src="../assets/burger.PNG" alt="">
@@ -22,7 +22,41 @@
                 </div>
      
             </nav>
+        </div> -->
+
+  <nav class="navbar navbar-light navbar-expand-lg  bg-white clean-navbar">
+        <div class="container">
+                 <RouterLink to="/" class="logo">
+                    <img src="../assets/burger.PNG" alt="">
+               </RouterLink>
+        <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                         <RouterLink v-if="main.tokenSet"  to="/dashboard">Dashboard</RouterLink>
+                    </li>
+                       <li class="nav-item">
+                          <RouterLink to="/builder">Burger builder</RouterLink>
+                    </li>
+                       <li class="nav-item">
+                             <RouterLink to="/menu">Menu</RouterLink>
+                    </li>
+                       <li class="nav-item">
+                             <RouterLink to="/contact">Contact</RouterLink>
+                    </li>
+                      <li class="nav-item">
+                              <RouterLink to="/cart">Cart</RouterLink>
+                    </li>
+                       <li class="nav-item">
+                             <a v-if="main.tokenSet"  @click="main.logout($event)">Logout</a>
+            
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
     </header>
 </template>
 
@@ -42,30 +76,24 @@
     
 </script>
 <style scoped lang="scss">
-.wrapper{
-      box-shadow: 0 11px 12px 0 rgb(0 0 0 / 12%);
-      display: flex;
-     justify-content: center;
-}
-    nav{
+    .logo{
         img{
             width: 100px;
         }
-        text-transform: uppercase;
-        font-size: 14px;
-        padding:25px;
-         display: flex;
-        justify-content: space-between;
-        width: 70%;
-        text-decoration: none;
-        .sidemenu{
-            display: flex;
+    }
+
+    .navbar{
+        li{
+            padding: 10px;
             a{
-                cursor: pointer;
+                text-decoration: none;
                 color: black;
-                    text-decoration: none;
-                padding: 10px;
+                cursor: pointer;
             }
+            
         }
+    }
+    .bg-white{
+        box-shadow: 0 11px 12px 0 rgb(0 0 0 / 12%);
     }
 </style> 

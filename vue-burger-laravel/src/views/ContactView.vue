@@ -1,10 +1,9 @@
 <template>
-<div>
+<div style="min-height:100vh">
     <div class="wrapper-contact">
             <div class="container">
                 <div class="row">
                     <h1>Contact Us</h1>
-                
                 </div>
             </div>
         </div>
@@ -14,33 +13,42 @@
 
                 <div class="col-md-6">
                     <div class="contact-info">
-                            <ul>
-                                <li>San Fransico, Ca</li>
-                                <li>123 Main Street</li>
-                                <li>123-123-1234</li>
-                                <li>Bobsburgerbuilder@gmail.com</li>
-                            </ul>
+                         
+                                <p>San Fransico, Ca</p>
+                                <p>123 Main Street</p>
+                                <p>123-123-1234</p>
+                                <p>Bobsburgerbuilder@gmail.com</p>
+                         
                     </div>
                   
                 </div>
                 <div class="col-md-6">
 
                     <div class="contact-form">
-                            <form>
+                            <form @submit.prevent="submitEmail"  method="POST">
                                 <div class="form-group">
                                     <label for="">Name</label>
                                     <input v-model="name" type="text" placeholder="name">
+                                    <small v-if="hasError('name')">
+                                        {{getError('name')}}
+                                    </small>
                                 </div>
                                 <div class="form-group">
                                     <label for="">Email</label>
                                     <input  v-model="email" type="text" placeholder="email">
+                                  <small v-if="hasError('email')">
+                                        {{getError('email')}}
+                                    </small>
                                 </div>
                                     <div class="form-group">
                                         <label for="">Message</label>
                                         <textarea  v-model="message" name="message" id="message"></textarea>
+                                         <small v-if="hasError('message')">
+                                          {{getError('message')}}}
+                                    </small>
                                     </div>
-                                
-                                    <button  @click="submitEmail($event)">Submit</button>
+                         
+                                    <button>Submit</button>
                             </form>
                     </div>
                        
@@ -102,7 +110,7 @@
  
 }
    .contact-info{
-margin-top: 50px;
+        margin-top: 50px;
     color: white;
     border-radius: 50px;
     background: #df7934;
@@ -113,7 +121,17 @@ margin-top: 50px;
     align-items: center;
     display: flex;
     font-size: 20px;
+    display: flex;
     justify-content: center;
+    flex-direction: column;
+        word-break: break-all;
+    
+    }
+
+    @media (max-width:768px) {
+        .contact-info{
+          height: unset;
+        }
     }
 </style>
 <script>
@@ -123,25 +141,50 @@ export default {
         return{
             name:'',
             email:'',
-            message:''
+            message:'',
+            nameError:'',
+            emailError:'',
+            messageError:'',
+            errors:{},
         }
     },
     methods:{
-        submitEmail(e){
-            e.preventDefault()
-            axios.post('http://localhost:8000/api/submit/email',
+        submitEmail(){
+          
+
+            axios.post(`${import.meta.env.VITE_BASE_URL}/api/submit/email`,
             {
               name:this.name,
               email:this.email,
               message:this.message
             })
             .then(response => {
-                
-                console.log(response)
-            
-                
+                console.log(response) 
             })
-            .catch(error => console.log(error)); 
+            .catch(error => {
+
+                   if(error.response.status === 422){
+                        console.log(error.response)
+
+                        this.setErrors(error.response.data.errors)
+                   }
+            
+            }); 
+
+
+        },
+        setErrors(errors){
+            this.errors = errors
+        },
+        hasError(fieldName){
+            return (fieldName in this.errors)
+        },
+        getError(fieldName){
+            return this.errors[fieldName][0]
+        },
+        clearError(event){
+            console.log(event.target.name)
+                delete this.errors[event.target.name]
         }
     }
 }

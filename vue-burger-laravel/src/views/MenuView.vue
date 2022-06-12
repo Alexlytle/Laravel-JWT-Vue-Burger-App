@@ -4,31 +4,29 @@
    <div class="wrapper-contact">
             <div class="container">
                 <div class="row">
-                    <h1>Menu</h1>
-             
-        
+                      <h1>Menu</h1>
                 </div>
             </div>
         </div>
 
         <div class="container">
-          <div class="row">
-              <div class="col-md-3">
-                  <div class="menu-box">
+          <div class="row  menu-row">
+              <div class="col-lg-3" >
+                  <div class="menu-box" style="min-height: 356px;">
                         <h1>Fries</h1>
                         <p>$2.50</p>
                         <img src="../assets/fries.png" alt="">
                         <button @click="addToCart('fries')">Add To Cart</button>
-                          <small v-if="fries==true">Please choose a drink</small>
-                         <small v-if="friesError == 'success'">Added to cart</small>
+                        <small v-if="fries==true">Please choose a drink</small>
+                        <small v-if="friesError == 'success'">Added to cart</small>
                   </div>
               </div>
-              <div class="col-md-3">
+              <div class="col-lg-3" >
                   <div class="menu-box">
                         <h1>Drink</h1>
                         <p>$1.50</p>
                         <img src="../assets/cups.png" alt="">
-                        <div class="d-flex">
+                        <div class="cart-select">
                           <select name="" id=""  v-model="drinkChoice">
                                   <option>Choose</option>
                             <option v-for="drink in drinks" :key="drink">
@@ -41,12 +39,12 @@
                          <small v-if="drinkError == 'success'">Added to cart</small>
                   </div>
               </div>
-                 <div class="col-md-3">
+              <div class="col-lg-3">
                   <div class="menu-box">
                         <h1>Shake</h1>
                         <p>$2.50</p>
                         <img src="../assets/shakes.png" alt="">
-                          <div class="d-flex">
+                          <div class="cart-select">
                         
                           <select name="" id="" v-model="shakeChoice">
                             <option>Choose</option>
@@ -62,7 +60,7 @@
                         <small v-if="shakeError=='success'">Added to cart</small>
                   </div>
               </div>
-                <div class="col-md-3">
+                <div class="col-lg-3">
                   <div class="menu-box">
                         <h1>Burger</h1>
                         <p>Starting at $3.50</p>
@@ -157,6 +155,7 @@ export default {
                   this.friesError = 'success'
                      this.cart[0].fries[0].price = parseFloat( this.cart[0].fries[0].price ) + parseFloat(2.50)
         }
+      
         if(item == 'drink'){
                if(this.drinkChoice !== 'Choose'){
                      this.drinkError = false
@@ -165,7 +164,7 @@ export default {
                 
                   for (let index = 0; index < this.cart[1].drink.length; index++) {
                     const element = this.cart[1].drink[index];
-               
+                    console.log(element)
                       if(Object.keys(element)[0] == this.drinkChoice){
                   
                             //add quantity
@@ -226,21 +225,40 @@ export default {
 </script>
 
 <style lang="scss">
+.cart-select{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+.menu-row{
+  min-height: 55vh;
+}
       .menu-box{
-              margin-top: 50px;
-              color: white;
-              border-radius: 50px;
-              background: #df7934;
-              box-shadow: 15px 15px 30px #d9d9d9, -15px -15px 30px #fff;
-              padding: 20px;
-              text-align:center;
+                margin-top: 50px;
+                color: white;
+                border-radius: 50px;
+                background: #df7934;
+                box-shadow: 15px 15px 30px #d9d9d9, -15px -15px 30px #fff;
+                padding: 20px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 img{
                   width: 80%;
                 }
+              select{
+                padding: 13px;
+              }
               button{
+                a{
+                  color: white;
+                  text-decoration: none;
+                }
                 border: none;
                 padding: 10px;
-                margin-top: 10px;
+            
                     background: #df7934;
                     border: 2px solid white;
                     color: white;
@@ -249,5 +267,15 @@ export default {
                 }
               }
               
+      }
+
+      @media (max-width:1024px) {
+          .cart-select{
+            flex-direction: column;
+                align-items: inherit;
+                select{
+                  margin-bottom: 10px;
+                }
+          }
       }
 </style>

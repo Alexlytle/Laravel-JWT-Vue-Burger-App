@@ -4,8 +4,8 @@
    <div class="wrapper-contact">
             <div class="container">
                 <div class="row">
-                    <h1>Cart</h1>
-                  
+                    <h1>Checkout</h1>
+                  <h1 v-if="successmessage">Thank you for ordering</h1>
                 </div>
             </div>
         </div>
@@ -14,20 +14,57 @@
           <div class="row justify-content-center">
             <div class="d-flex justify-content-center align-items-center">
                 <h1>Price :{{formatPrice(finalPrice)}}</h1>
-                <button>
-        <RouterLink to="/checkout">
-                                 Checkout
-                            </RouterLink>
-                </button>
-            
+                  
             </div>
        
-          
+    <div class="col-md-6">
+                <h2>Details</h2>
+                    <form action="">    
+                                <div class="form-group">
+                                    <label for="">Name</label>
+                                    <input type="text" v-model='name'>
+                                       <small v-if="hasError('name')">
+                                        {{getError('name')}}
+                                    </small>
+                                </div>
+                                 <div class="form-group">
+                                    <label for="">Email</label>
+                                    <input type="email" v-model='email'>
+                                      <small v-if="hasError('email')">
+                                        {{getError('email')}}
+                                    </small>
+                                </div>
+                                 <div class="form-group">
+                                    <label for="">Phone</label>
+                                    <input type="text" v-model='phone'>
+                                      <small v-if="hasError('phone')">
+                                        {{getError('phone')}}
+                                    </small>
+                                </div>
+                                    <div class="form-group">
+                                    <label for="">Zip</label>
+                                    <input type="text" v-model='zip'>
+                                       <small v-if="hasError('zip')">
+                                        {{getError('zip')}}
+                                    </small>
+                                </div>
+                               
+                                <div class="form-group">
+                                    <label for="">City</label>
+                                    <input type="text" v-model='city'>
+                                 <small v-if="hasError('city')">
+                                        {{getError('city')}}
+                                    </small>
+                                </div>
+                                <button @click="submit($event)">Submit</button>
+                            </form>
+        
+     </div>
            
             
             
-              <div class="col-md-4">
-
+    <div class="col-md-6">
+ <h2>Cart</h2>
             <div class="col-md-12" v-for="fries in cart[0].fries" :key="fries">
                  
                     <!-- {{fries}} -->
@@ -102,32 +139,12 @@
                   </div>
                  
                 </div>
-              </div>
-  
-             
-                   
-                 
-          </div>
-      
-          <div class="row">
-            <h1 v-if="cart[3].burger.length>=1">Burgers</h1>
-                    <div class="col-md-3" v-for="(burger,index) in cart[3].burger">
+
+                           <div  v-for="(burger,index) in cart[3].burger">
                
                           
-                              <div class="bread-top">
-                                  <div class="seeds"></div>
-                                  <div class="seeds2"></div>
-                                </div>
-
-                           <div v-for="salad in JSON.parse(burger)[0].salad" class="salad"></div>
-                            <div v-for="salad in JSON.parse(burger)[1].bacon" class="bacon"></div>
-                           <div v-for="salad in JSON.parse(burger)[2].cheese" class="cheese"></div>
-                              <div v-for="salad in JSON.parse(burger)[3].meat" class="meat"></div>
-                               
-                       
-                         <div class="bread-bottom"></div>
-                          <p>ingredients</p>
-                          <div class="d-flex" style="justify-content:space-evenly">
+                 
+                          <div class="d-flex cart-box menu-box" style="justify-content:space-evenly;margin-top:25px">
                             <div class="">
                                   <div class="">  
                                       Salad:  {{JSON.parse(burger)[0].salad.length}}
@@ -147,19 +164,26 @@
 
                                  
                             </div>
-                               <div class="cart-box menu-box" style="width:100px;">
+                              
+                        
                                 
                                   <div class="addminusbox">
                                   <i @click="doubleBurger(burger)" class="fa-solid fa-plus"></i>
                                         <i  @click="decreaseBurger(burger,index)" class="fa-solid fa-minus"></i>
                                   </div>
                               </div>
-                           
-                          </div>
+                     
                          
                    
                      </div>
+              </div>
+       
+             
+                   
+                 
           </div>
+      
+     
         </div>
 </div>
       
@@ -167,6 +191,8 @@
 
 
 <script>
+import axios from 'axios'
+import router from '../router'
 export default {
     data(){
       return{
@@ -186,6 +212,18 @@ export default {
                 
           ],
           finalPrice:0,
+            name:'',
+            city:'',
+            phone:'',
+            email:'',
+            zip:'',
+            nameError:'',
+            cityError:'',
+            phoneError:'',
+            emailError:'',
+            zipError:'',
+            successmessage:false,
+            errors:[]
          
       }
     },
@@ -200,6 +238,41 @@ export default {
         this.totalPrice()
     },
     methods:{
+        submit(e){
+                e.preventDefault()
+
+          axios.post(`${import.meta.env.VITE_BASE_URL}/api/submit/burger`,
+            {
+              name:this.name,
+              email:this.email,
+              phone:this.phone,
+              zip:this.zip,
+              city:this.city,
+              burger_data:this.cart
+            })
+            .then(response => {
+                console.log(response) 
+                this.successmessage = true
+            })
+            .catch(error => {
+                 
+                 if(error.response.status === 422){
+                        console.log(error.response)
+
+                        this.setErrors(error.response.data.errors)
+                   }
+            }); 
+             
+        },
+         setErrors(errors){
+            this.errors = errors
+        },
+        hasError(fieldName){
+            return (fieldName in this.errors)
+        },
+        getError(fieldName){
+            return this.errors[fieldName][0]
+        },
       increase(item,type){
     
          if(type == 'drink'){
@@ -322,7 +395,9 @@ export default {
             }
                
         }
-
+      if(this.finalPrice == 0){
+              router.push({ path: '/menu' })
+            }
            localStorage.setItem('cart',JSON.stringify(this.cart))
 
       },
@@ -363,6 +438,12 @@ export default {
   
                    this.finalPrice += parseFloat(JSON.parse(burger)[4].finalPrice)
             }
+
+
+         
+              
+            
+
                          
       }
 
@@ -374,22 +455,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
+button{
+      padding: 10px;
+    margin-top: 10px;
+    background: #df7934;
+    border: 2px solid white;
+    color: white;
+}
+form{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
-          button{
-                a{
-                  color: white;
-                  text-decoration: none;
-                }
-                border: none;
-                padding: 10px;
-                margin-left: 20px;
-                background: #df7934;
-                border: 2px solid white;
-                color: white;
-                  &:hover{
-                  background: #ee6509;
-                }
-              }
+}
+.form-group{
+      display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    input{
+      width: 300px;
+    }
+ 
+}
+
+@media (max-width:768px) {
+    .form-group{
+      input{
+        width: unset;
+      }
+  }
+}
 .main-cart{
   min-height: 100vh;
 }

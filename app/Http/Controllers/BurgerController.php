@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Burger;
+use App\Models\SubmitBuger;
 use Illuminate\Http\Request;
+use App\Mail\CustomerAdminMail;
+use App\Mail\CustomerOrderMail;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreBurgerRequest;
 use App\Http\Requests\UpdateBurgerRequest;
 
@@ -40,11 +44,12 @@ class BurgerController extends Controller
     {
         $request->validate([
             'burger' => 'required',
+            'burger_name' => 'required',
         ]);
         return Burger::create([
             'user_id'=> auth()->user()->id,
             'burger'=>$request->burger,
-            'burger_name'=>$request->name
+            'burger_name'=>$request->burger_name
         ]);
     }
 
@@ -99,5 +104,21 @@ class BurgerController extends Controller
     public function user()
     {
         return 'hello';
+    }
+
+    public function submitBurger(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|string',
+            'name' => 'required|string',
+            'phone' => 'required|numeric|digits:10',
+            'zip' => 'required|numeric|digits:5',
+            'city' => 'required|string',
+        ]);
+        Mail::to('alex.joe.lytle@gmail.com')->send(new CustomerAdminMail($request->name,$request->email,$request->phone,$request->zip,$request->city,json_encode($request->burger_data)));
+
+        Mail::to($request->email)->send(new CustomerOrderMail($request->name,$request->email,$request->phone,$request->zip,$request->city,json_encode($request->burger_data)));
+        SubmitBuger::create($request->all());
     }
 }

@@ -19,8 +19,9 @@ export const useCounterStore = defineStore({
        emailErrorsNameSignUp:'',
        emailErrorsPasswordSignUp:'',
        passwordLogin:'',
-       emailLogin:''
-
+       emailLogin:'',
+       regsiterSpinner:false,
+       signInSpinner:false
 
     }),
     actions: {
@@ -43,6 +44,7 @@ export const useCounterStore = defineStore({
         },
         register(e){
             e.preventDefault()
+            this.regsiterSpinner  = true
             axios.post('http://localhost:8000/api/register',{
                 name:this.name,
                 email:this.email,
@@ -54,8 +56,10 @@ export const useCounterStore = defineStore({
                     localStorage.setItem('token',response.data.token)
                     this.tokenSet = true
                     router.push({ path: '/dashboard' })
+                    this.regsiterSpinner = false
             })
             .catch(error=>{
+                this.regsiterSpinner = false
                     if(error.response.status === 422){
                         if(error.response.data.errors.email[0] !== ''){
                             this.emailErrorSignUp = error.response.data.errors.email[0]
@@ -73,13 +77,14 @@ export const useCounterStore = defineStore({
         },
         login(e){
             e.preventDefault()
+            this.signInSpinner = true
             axios.post('http://localhost:8000/api/login',{
                 email:this.loginEmail,
                 password:this.loginPassword,
 
             })
             .then(response => {
-              
+                this.signInSpinner = false
                     localStorage.setItem('token',response.data.token)
                     this.tokenSet = true
                     router.push({ path: '/dashboard' })
@@ -87,15 +92,16 @@ export const useCounterStore = defineStore({
                     
             })
             .catch(error => {
+                this.signInSpinner = false
                 if(error.response.status === 422){
                  
-                    if(error.response.data.errors.email[0] !== ''){
+                    if(error.response.data.errors.email.length !== 0){
                         this.emailLogin = error.response.data.errors.email[0]
                         console.log(error.response.data.errors.email[0])
                     }
 
 
-                    if(error.response.data.errors.password[0] !== ''){
+                    if(error.response.data.errors.password.length !== 0){
                         this.passwordLogin = error.response.data.errors.password[0]
                     }
           

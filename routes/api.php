@@ -25,6 +25,8 @@ Route::get('/login', [AuthController::class, 'loginUser'])->name('login');
 Route::get('/token', [AuthController::class, 'token']);
 
 Route::post('/submit/email', [EmailController::class, 'contactEmail']);
+
+Route::post('/submit/burger', [BurgerController::class, 'submitBurger']);
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/loggedIn', [AuthController::class, 'whosLoggedIn']);
